@@ -1,0 +1,25 @@
+// Create each measure separately in Power BI. The table must be named Events.
+Total Events = DISTINCTCOUNT(Events[Event_ID])
+
+Active Clubs = DISTINCTCOUNT(Events[Club])
+
+Total Registrations = SUM(Events[Registrations])
+
+Total Attendance = SUM(Events[Attendees])
+
+Attendance Rate = DIVIDE([Total Attendance], [Total Registrations])
+
+Total Budget = SUM(Events[Budget_AED])
+
+Total Spend = SUM(Events[Actual_Cost_AED])
+
+Budget Remaining = [Total Budget] - [Total Spend]
+
+Feedback Responses = SUM(Events[Feedback_Responses])
+
+Average Feedback = DIVIDE(SUM(Events[Feedback_Points]), [Feedback Responses])
+
+Feedback Response Rate = DIVIDE([Feedback Responses], [Total Attendance])
+
+Cost per Attendance = DIVIDE([Total Spend], [Total Attendance])
+

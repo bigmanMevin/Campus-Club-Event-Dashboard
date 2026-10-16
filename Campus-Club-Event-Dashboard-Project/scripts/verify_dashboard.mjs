@@ -1,0 +1,25 @@
+// Logic test with a minimal DOM stand-in. This is not a browser rendering test.
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const code=html.match(/<script>([\s\S]*?)<\/script>/)[1];
+const nodes={};
+const document={getElementById(id){return nodes[id]??=( {value:id==='from'?'2026-01-01':id==='to'?'2026-06-30':id==='sort'?'date':'',innerHTML:'',textContent:'',listeners:{},add(){},addEventListener(event,fn){this.listeners[event]=fn;}} )}};
+const ctx=vm.createContext({document,Option:function(text,value){this.text=text;this.value=value;},console});
+vm.runInContext(code,ctx);
+const run=()=>vm.runInContext('render()',ctx);
+const values=()=>[...nodes.cards.innerHTML.matchAll(/<strong>(.*?)<\/strong>/g)].map(x=>x[1]);
+assert.deepEqual(values(),['36','2,628','74.7%','44,079','4.10']);
+nodes.club.value='Music Club';run();assert.equal(values()[0],'6');
+nodes.category.value='Workshop';run();assert.equal(values()[0],'0');assert.ok(nodes.clubs.innerHTML.includes('No events'));
+nodes.reset.listeners.click();nodes.category.value='Workshop';run();assert.equal(values()[0],'12');
+nodes.reset.listeners.click();nodes.from.value='2026-02-01';run();assert.equal(values()[0],'30');
+nodes.reset.listeners.click();nodes.sort.value='budget';run();
+const sorted=JSON.parse(fs.readFileSync(path.join(root,'data/events.json'),'utf8')).sort((a,b)=>(a.Budget_AED-a.Actual_Cost_AED)-(b.Budget_AED-b.Actual_Cost_AED));
+assert.ok(nodes.events.innerHTML.startsWith('<tr><td>'+sorted[0].Event_Name+'</td>'));
+nodes.reset.listeners.click();assert.deepEqual(values(),['36','2,628','74.7%','44,079','4.10']);
+console.log('PASS: totals, club/category/date filters, empty state, sorting and reset logic.');

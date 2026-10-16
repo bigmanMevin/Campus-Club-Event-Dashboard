@@ -1,0 +1,176 @@
+{
+  "name": "CampusEvents",
+  "compatibilityLevel": 1567,
+  "model": {
+    "culture": "en-US",
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "sourceQueryCulture": "en-US",
+    "tables": [
+      {
+        "name": "Events",
+        "columns": [
+          {
+            "name": "Event_ID",
+            "dataType": "string",
+            "sourceColumn": "Event_ID",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Event_Name",
+            "dataType": "string",
+            "sourceColumn": "Event_Name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Club",
+            "dataType": "string",
+            "sourceColumn": "Club",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Category",
+            "dataType": "string",
+            "sourceColumn": "Category",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Event_Date",
+            "dataType": "dateTime",
+            "sourceColumn": "Event_Date",
+            "summarizeBy": "none",
+            "formatString": "dd MMM yyyy"
+          },
+          {
+            "name": "Registrations",
+            "dataType": "int64",
+            "sourceColumn": "Registrations",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Attendees",
+            "dataType": "int64",
+            "sourceColumn": "Attendees",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Budget_AED",
+            "dataType": "int64",
+            "sourceColumn": "Budget_AED",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Actual_Cost_AED",
+            "dataType": "int64",
+            "sourceColumn": "Actual_Cost_AED",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Feedback_Responses",
+            "dataType": "int64",
+            "sourceColumn": "Feedback_Responses",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Feedback_Points",
+            "dataType": "int64",
+            "sourceColumn": "Feedback_Points",
+            "summarizeBy": "sum"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Total Events",
+            "expression": "DISTINCTCOUNT(Events[Event_ID])",
+            "formatString": "#,0",
+            "displayFolder": "Event metrics"
+          },
+          {
+            "name": "Active Clubs",
+            "expression": "DISTINCTCOUNT(Events[Club])",
+            "formatString": "#,0",
+            "displayFolder": "Event metrics"
+          },
+          {
+            "name": "Total Registrations",
+            "expression": "SUM(Events[Registrations])",
+            "formatString": "#,0",
+            "displayFolder": "Event metrics"
+          },
+          {
+            "name": "Total Attendance",
+            "expression": "SUM(Events[Attendees])",
+            "formatString": "#,0",
+            "displayFolder": "Event metrics"
+          },
+          {
+            "name": "Attendance Rate",
+            "expression": "DIVIDE([Total Attendance], [Total Registrations])",
+            "formatString": "0.0%",
+            "displayFolder": "Event metrics"
+          },
+          {
+            "name": "Total Budget",
+            "expression": "SUM(Events[Budget_AED])",
+            "formatString": "#,0",
+            "displayFolder": "Event metrics"
+          },
+          {
+            "name": "Total Spend",
+            "expression": "SUM(Events[Actual_Cost_AED])",
+            "formatString": "#,0",
+            "displayFolder": "Event metrics"
+          },
+          {
+            "name": "Budget Remaining",
+            "expression": "[Total Budget] - [Total Spend]",
+            "formatString": "#,0",
+            "displayFolder": "Event metrics"
+          },
+          {
+            "name": "Feedback Responses",
+            "expression": "SUM(Events[Feedback_Responses])",
+            "formatString": "#,0",
+            "displayFolder": "Event metrics"
+          },
+          {
+            "name": "Average Feedback",
+            "expression": "DIVIDE(SUM(Events[Feedback_Points]), [Feedback Responses])",
+            "formatString": "0.00",
+            "displayFolder": "Event metrics"
+          },
+          {
+            "name": "Feedback Response Rate",
+            "expression": "DIVIDE([Feedback Responses], [Total Attendance])",
+            "formatString": "0.0%",
+            "displayFolder": "Event metrics"
+          },
+          {
+            "name": "Cost per Attendance",
+            "expression": "DIVIDE([Total Spend], [Total Attendance])",
+            "formatString": "0.00",
+            "displayFolder": "Event metrics"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Events",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Csv.Document(Binary.FromText(\"RXZlbnRfSUQsRXZlbnRfTmFtZSxDbHViLENhdGVnb3J5LEV2ZW50X0RhdGUsUmVnaXN0cmF0aW9ucyxBdHRlbmRlZXMsQnVkZ2V0X0FFRCxBY3R1YWxfQ29zdF9BRUQsRmVlZGJhY2tfUmVzcG9uc2VzLEZlZWRiYWNrX1BvaW50cw0KRVZUMDAxLE9wZW4gTWljIDEsTXVzaWMgQ2x1YixQZXJmb3JtYW5jZSwyMDI2LTAxLTA1LDYyLDQwLDE3MDAsMTUxNCwyOCwxMTINCkVWVDAwMixQeXRob24gTGFiIDEsQ29kaW5nIENsdWIsV29ya3Nob3AsMjAyNi0wMS0wOCwxNDQsMTI4LDUwMCw0ODcsMTA3LDQyMA0KRVZUMDAzLFNwb3J0cyBDaGFsbGVuZ2UgMSwgIFNwb3J0cyBDbHViICAsQ29tcGV0aXRpb24sMjAyNi0wMS0xMSwxMjIsODEsMTUwMCwxNzgwLDY0LDI2Ng0KRVZUMDA0LFRoZWF0cmUgU29jaWFsIDEsRHJhbWEgQ2x1YixTb2NpYWwsMjAyNi0wMS0xNCwxNDYsMTIyLDIxMDAsMjI1MCw5OSw0MDANCkVWVDAwNSxQaG90byBXYWxrIDEsUGhvdG9ncmFwaHkgQ2x1YixXb3Jrc2hvcCwyMDI2LTAxLTE3LDc0LDUzLDUwMCw1NjEsMjYsMTA5DQpFVlQwMDYsQ29tbXVuaXR5IERyaXZlIDEsQ29tbXVuaXR5IENsdWIsVm9sdW50ZWVyaW5nLDIwMjYtMDEtMjAsMTE0LDEwNiwxNDAwLDEwNzgsNjUsMjY1DQpFVlQwMDcsT3BlbiBNaWMgMixNdXNpYyBDbHViLHBlcmZvcm1hbmNlLDIwMjYtMDItMDUsNDgsNDIsNzAwLDczNiwyMSw4Ng0KRVZUMDA4LFB5dGhvbiBMYWIgMixDb2RpbmcgQ2x1YixXb3Jrc2hvcCwyMDI2LTAyLTA4LDEzMSw5MywxMjAwLDEyODMsNzYsMzA1DQpFVlQwMDksU3BvcnRzIENoYWxsZW5nZSAyLFNwb3J0cyBDbHViLENvbXBldGl0aW9uLDIwMjYtMDItMTEsMTI4LDc2LDcwMCw3NjMsNDYsMTkwDQpFVlQwMTAsVGhlYXRyZSBTb2NpYWwgMixEcmFtYSBDbHViLFNvY2lhbCwyMDI2LTAyLTE0LDk4LDkxLDcwMCw2MzAsNjgsMjgxDQpFVlQwMTEsUGhvdG8gV2FsayAyLFBob3RvZ3JhcGh5IENsdWIsV29ya3Nob3AsMjAyNi0wMi0xNyw2NCw1NSwyMDAwLDIzMzcsMzAsMTI4DQpFVlQwMTIsQ29tbXVuaXR5IERyaXZlIDIsICBDb21tdW5pdHkgQ2x1YiAgLFZvbHVudGVlcmluZywyMDI2LTAyLTIwLDk2LDY1LDI1MDAsMjQ5MSw0MSwxNzUNCkVWVDAxMyxPcGVuIE1pYyAzLE11c2ljIENsdWIsUGVyZm9ybWFuY2UsMjAyNi0wMy0wNSw1NSw0Miw1MDAsNDAzLDIwLDg5DQpFVlQwMTQsUHl0aG9uIExhYiAzLENvZGluZyBDbHViLFdvcmtzaG9wLDIwMjYtMDMtMDgsMTM2LDEwOSw2MDAsNTAxLDkyLDM3Nw0KRVZUMDE1LFNwb3J0cyBDaGFsbGVuZ2UgMyxTcG9ydHMgQ2x1YixDb21wZXRpdGlvbiwyMDI2LTAzLTExLDk1LDcyLDI0MDAsMjAxNCw1MCwxOTUNCkVWVDAxNixUaGVhdHJlIFNvY2lhbCAzLERyYW1hIENsdWIsU29jaWFsLDIwMjYtMDMtMTQsMTI1LDkzLDExMDAsODY2LDYwLDIzNQ0KRVZUMDE3LFBob3RvIFdhbGsgMyxQaG90b2dyYXBoeSBDbHViLFdvcmtzaG9wLDIwMjYtMDMtMTcsMTI3LDExNiwyMjAwLDIxMjcsOTYsMzg4DQpFVlQwMTgsQ29tbXVuaXR5IERyaXZlIDMsQ29tbXVuaXR5IENsdWIsdm9sdW50ZWVyaW5nLDIwMjYtMDMtMjAsOTUsNjUsODAwLDgwMSwzMCwxMzANCkVWVDAxOSxPcGVuIE1pYyA0LE11c2ljIENsdWIsUGVyZm9ybWFuY2UsMjAyNi0wNC0wNSwxNTYsOTQsNTAwLDU3MSw3OSwzMzENCkVWVDAyMCxQeXRob24gTGFiIDQsQ29kaW5nIENsdWIsV29ya3Nob3AsMjAyNi0wNC0wOCw2NSw0NCwyMjAwLDE4MDEsMjQsOTYNCkVWVDAyMSxTcG9ydHMgQ2hhbGxlbmdlIDQsICBTcG9ydHMgQ2x1YiAgLENvbXBldGl0aW9uLDIwMjYtMDQtMTEsODcsNzYsMTEwMCwxMDExLDU5LDI0Ng0KRVZUMDIyLFRoZWF0cmUgU29jaWFsIDQsRHJhbWEgQ2x1YixTb2NpYWwsMjAyNi0wNC0xNCwxMzksODYsMTEwMCwxMjQ0LDU0LDIyNA0KRVZUMDIzLFBob3RvIFdhbGsgNCxQaG90b2dyYXBoeSBDbHViLFdvcmtzaG9wLDIwMjYtMDQtMTcsOTAsNzksMTAwMCwxMTIwLDU3LDIzNQ0KRVZUMDI0LENvbW11bml0eSBEcml2ZSA0LENvbW11bml0eSBDbHViLFZvbHVudGVlcmluZywyMDI2LTA0LTIwLDU1LDQxLDEzMDAsMTQ5MywyNywxMDMNCkVWVDAyNSxPcGVuIE1pYyA1LE11c2ljIENsdWIsUGVyZm9ybWFuY2UsMjAyNi0wNS0wNSw0NiwyOSwyMDAwLDIxMTMsMjAsODINCkVWVDAyNixQeXRob24gTGFiIDUsQ29kaW5nIENsdWIsd29ya3Nob3AsMjAyNi0wNS0wOCw1NiwzMiw2MDAsNTY5LDIzLDk0DQpFVlQwMjcsU3BvcnRzIENoYWxsZW5nZSA1LFNwb3J0cyBDbHViLENvbXBldGl0aW9uLDIwMjYtMDUtMTEsMTQxLDEwOSwxMjAwLDEyNDAsODksMzY4DQpFVlQwMjgsVGhlYXRyZSBTb2NpYWwgNSxEcmFtYSBDbHViLFNvY2lhbCwyMDI2LTA1LTE0LDUxLDMzLDkwMCw5NTEsMjYsMTEwDQpFVlQwMjksUGhvdG8gV2FsayA1LFBob3RvZ3JhcGh5IENsdWIsV29ya3Nob3AsMjAyNi0wNS0xNyw1Myw0MCwxMTAwLDEyOTUsMjgsMTE3DQpFVlQwMzAsQ29tbXVuaXR5IERyaXZlIDUsQ29tbXVuaXR5IENsdWIsVm9sdW50ZWVyaW5nLDIwMjYtMDUtMjAsMTU5LDE0MCwxMTAwLDEwNDgsMTE2LDQ4MA0KRVZUMDMxLE9wZW4gTWljIDYsTXVzaWMgQ2x1YixQZXJmb3JtYW5jZSwyMDI2LTA2LTA1LDgwLDQ2LDkwMCw4NjUsMjQsMTA2DQpFVlQwMzIsUHl0aG9uIExhYiA2LENvZGluZyBDbHViLFdvcmtzaG9wLDIwMjYtMDYtMDgsMTIxLDc0LDE5MDAsMTU2MCwzNiwxNDcNCkVWVDAzMyxTcG9ydHMgQ2hhbGxlbmdlIDYsU3BvcnRzIENsdWIsQ29tcGV0aXRpb24sMjAyNi0wNi0xMSw2OCw1OCwxMTAwLDEyNTksNDMsMTc0DQpFVlQwMzQsVGhlYXRyZSBTb2NpYWwgNixEcmFtYSBDbHViLFNvY2lhbCwyMDI2LTA2LTE0LDcxLDQxLDE3MDAsMTQ1MiwyMSw4OQ0KRVZUMDM1LFBob3RvIFdhbGsgNixQaG90b2dyYXBoeSBDbHViLFdvcmtzaG9wLDIwMjYtMDYtMTcsMTQ0LDEwMyw2MDAsNDYzLDcwLDI4Mg0KRVZUMDM2LENvbW11bml0eSBEcml2ZSA2LENvbW11bml0eSBDbHViLFZvbHVudGVlcmluZywyMDI2LTA2LTIwLDc1LDU0LDEzMDAsMTQwMiw0NiwxOTMNCkVWVDAwOCxQeXRob24gTGFiIDIsQ29kaW5nIENsdWIsV29ya3Nob3AsMjAyNi0wMi0wOCwxMzEsOTMsMTIwMCwxMjgzLDc2LDMwNQ0K\", BinaryEncoding.Base64), [Delimiter=\",\", Columns=11, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),",
+                "    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),",
+                "    CleanLabels = Table.TransformColumns(Headers, {{\"Club\", Text.Trim, type text}, {\"Category\", each Text.Proper(Text.Trim(_)), type text}}),",
+                "    Deduplicated = Table.Distinct(CleanLabels, {\"Event_ID\"}),",
+                "    Typed = Table.TransformColumnTypes(Deduplicated, {{\"Event_ID\", type text}, {\"Event_Name\", type text}, {\"Club\", type text}, {\"Category\", type text}, {\"Event_Date\", type date}, {\"Registrations\", Int64.Type}, {\"Attendees\", Int64.Type}, {\"Budget_AED\", Int64.Type}, {\"Actual_Cost_AED\", Int64.Type}, {\"Feedback_Responses\", Int64.Type}, {\"Feedback_Points\", Int64.Type}}, \"en-US\")",
+                "in",
+                "    Typed"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
